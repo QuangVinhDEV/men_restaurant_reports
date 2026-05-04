@@ -141,37 +141,44 @@ def get_mtd_metrics(df):
 # FILTER: CHỌN THÁNG/NĂM
 # =====================
 
-# Lấy danh sách các tháng/năm duy nhất có trong dữ liệu để tạo menu chọn
-# 1. Tạo cột tháng/năm để làm bộ lọc
+# =====================
+# FILTER: CHỌN THÁNG/NĂM
+# =====================
 df_rev['month_year'] = df_rev['date'].dt.strftime('%m/%Y')
 available_months = sorted(df_rev['month_year'].unique(), reverse=True)
 
 st.sidebar.header("📍 Cấu hình báo cáo")
 selected_month_year = st.sidebar.selectbox(
-    "Chosse the month to analysis:",
+    "Choose the month to analysis:",
     options=available_months,
-    index=0  # Chọn tháng mới nhất
+    index=0
 )
 
-# 1. Lấy dữ liệu tháng hiện tại (Selected Month)
-df_selected = df_rev[df_rev['month_year'] == selected_month_year]
+# 1. Xác định ngày tối đa của tháng được chọn (MTD logic)
+# Nếu chọn tháng hiện tại, ngày max là ngày cuối cùng có dữ liệu. 
+# Nếu chọn tháng cũ trong quá khứ, ngày max là ngày cuối cùng của tháng đó.
+df_selected_full = df_rev[df_rev['month_year'] == selected_month_year]
+max_day_in_selected = df_selected_full['date'].dt.day.max() 
+
+# Lọc dữ liệu MTD cho tháng được chọn (từ ngày 1 đến ngày max_day_in_selected)
+df_selected = df_selected_full[df_selected_full['date'].dt.day <= max_day_in_selected]
+
 m_rev = df_selected['revenue'].sum()
 m_tc = df_selected['TC'].sum()
 m_ac = m_rev / m_tc if m_tc > 0 else 0
 
-# 2. XỬ LÝ THÁNG TRƯỚC (Last Month Logic)
-# Chuyển đổi tháng được chọn về dạng datetime để trừ đi 1 tháng
+# 2. XỬ LÝ THÁNG TRƯỚC (LMTD Logic - Lấy ngày tương đương)
 current_month_dt = pd.to_datetime(selected_month_year, format='%m/%Y')
 last_month_dt = current_month_dt - pd.DateOffset(months=1)
 last_month_year_str = last_month_dt.strftime('%m/%Y')
 
-# Lọc dữ liệu tháng trước
-df_last_month = df_rev[df_rev['month_year'] == last_month_year_str]
+# Lọc dữ liệu tháng trước nhưng CHỈ LẤY đến ngày tương đương (max_day_in_selected)
+df_last_month_full = df_rev[df_rev['month_year'] == last_month_year_str]
+df_last_month_mtd = df_last_month_full[df_last_month_full['date'].dt.day <= max_day_in_selected]
 
-# Nếu có dữ liệu tháng trước thì tính, không thì mặc định là 0
-if not df_last_month.empty:
-    l_rev = df_last_month['revenue'].sum()
-    l_tc = df_last_month['TC'].sum()
+if not df_last_month_mtd.empty:
+    l_rev = df_last_month_mtd['revenue'].sum()
+    l_tc = df_last_month_mtd['TC'].sum()
     l_ac = l_rev / l_tc if l_tc > 0 else 0
 else:
     l_rev, l_tc, l_ac = 0, 0, 0
