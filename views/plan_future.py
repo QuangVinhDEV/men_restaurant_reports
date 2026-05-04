@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime, timedelta
 
 st.title("🚀 Strategic Planning & Forecasting")
-st.info("Sử dụng dữ liệu lịch sử để dự báo doanh thu và lập chiến lược cho tuần tới.")
+st.info("Use historical data to forecast revenue and develop a strategy for the coming week.")
 
 # =====================
 # 1. SMART FORECASTING (Dự báo thông minh)
@@ -111,7 +111,7 @@ if 'tasks' not in st.session_state:
         st.session_state.tasks = []
 
 # --- GIAO DIỆN CHÍNH ---
-st.subheader("🎯 Kế hoạch hành động Tuần " + str(current_week))
+st.subheader("🎯 Weekly Action Plan " + str(current_week))
 
 # Nút thêm task mới
 if st.button("➕ Thêm ô nhiệm vụ mới"):

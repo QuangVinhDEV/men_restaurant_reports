@@ -202,7 +202,7 @@ st.plotly_chart(fig_line, use_container_width=True)
 
 # --- FOOTER INSIGHTS ---
 st.markdown("---")
-st.subheader("🚀 Đề xuất từ Chuyên gia")
+st.subheader("🚀 PROPOSAL")
 st.markdown(f"""
 1. **Rủi ro tập trung:** 5 món đứng đầu chiếm **{(prod_perf['amount'].nlargest(5).sum() / total_rev * 100):.1f}%** tổng doanh thu.
 2. **Hiệu suất Đồ uống:** Tỷ lệ hóa đơn có đồ uống (Beer Attach Rate) đạt **{(beer_df['bill_id'].nunique() / unique_bills * 100):.1f}%**.
