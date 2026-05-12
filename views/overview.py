@@ -193,7 +193,7 @@ else:
 # Bạn có thể tạo một dictionary để gán target riêng cho từng tháng nếu cần
 TARGET_CONFIG = {
     "04/2024": 1260000000,
-    "05/2024": 1260000000,
+    "05/2024": 1140000000,
 }
 # Lấy target theo tháng, nếu không có thì dùng mặc định 1.26 tỷ
 target_month = TARGET_CONFIG.get(selected_month_year, 1260000000)
